@@ -3,8 +3,11 @@ defmodule AlarmClock do
   Main module for the alarm clock project all logic for the application lives here.
   """
   def parse_args(args) do
-    case OptionParser.parse(args, switches: [hour: :integer]) do
-      {[hour: hour], _, _} -> hour
+    parsed = OptionParser.parse(args, switches: [hour: :integer, minute: :integer]) 
+    IO.inspect parsed
+    case parsed do
+      {[hour: hour], _, _} -> {hour, 0}
+      {[hour: hour, minute: minute], _, _} -> {hour, minute}
       _ -> {:error, "Invalid usage"}
     end
   end
