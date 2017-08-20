@@ -22,6 +22,7 @@ defmodule AlarmClock do
     |> Map.update!(:minute, fn(_) -> elem(time_args, 1) end)
     |> Map.update!(:second, fn(_) -> 0 end)
   end
+
   def set_alarm(alarm_time) do
     current_time = DateTime.utc_now
     case DateTime.compare(current_time, alarm_time) do
@@ -29,6 +30,19 @@ defmodule AlarmClock do
       :eq -> IO.puts "Alarm Triggered EQ"
       _ -> set_alarm(alarm_time)
     end
+  end
+
+  def read_video_list do
+    {_, file_content} = File.read("./video_list.txt")
+    file_content
+		|>  String.trim
+		|>  String.split("\n")
+	end
+
+  def randomly_select_video(video_list) do
+    youtube_base_url = "https://www.youtube.com/watch?v="
+    selected_video = video_list |> Enum.random
+    youtube_base_url <> selected_video
   end
 
   @doc """
@@ -40,6 +54,6 @@ defmodule AlarmClock do
     |> date_time_from_args
     |> set_alarm
 
-    System.cmd("sensible-browser", ["http://www.youtube.com"])
+    System.cmd("sensible-browser", [read_video_list() |> randomly_select_video])
   end
 end
