@@ -1,17 +1,11 @@
 defmodule AlarmClock do
   @moduledoc """
+  Main module for the alarm clock project all logic for the application lives here.
   """
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> AlarmClock.hello
-      :world
-
   """
-  def hello do
-    :world
+  def main(args) do
+    IO.puts args
   end
 end
