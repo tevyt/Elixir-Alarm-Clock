@@ -20,6 +20,7 @@ defmodule AlarmClock do
       {hour, _, "pm"} -> current_date_time |> Map.update!(:hour, fn(_)  -> rem(hour + 17, 24) end)
     end
     |> Map.update!(:minute, fn(_) -> elem(time_args, 1) end)
+    |> Map.update!(:second, fn(_) -> 0 end)
   end
   def set_alarm(alarm_time) do
     current_time = DateTime.utc_now
