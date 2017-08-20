@@ -39,5 +39,7 @@ defmodule AlarmClock do
     |> parse_args
     |> date_time_from_args
     |> set_alarm
+
+    System.cmd("sensible-browser", ["http://www.youtube.com"])
   end
 end
