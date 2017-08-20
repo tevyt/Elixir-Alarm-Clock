@@ -4,7 +4,6 @@ defmodule AlarmClock do
   """
   def parse_args(args) do
     parsed = OptionParser.parse(args, switches: [hour: :integer, minute: :integer, period: :string]) 
-    IO.inspect parsed
     case parsed do
       {[hour: hour], _, _} -> {hour, 0, "am"}
       {[hour: hour, minute: minute], _, _} -> {hour, minute, "am"}
@@ -19,6 +18,5 @@ defmodule AlarmClock do
   def main(args) do
     args
     |> parse_args
-    |> IO.inspect
   end
 end
