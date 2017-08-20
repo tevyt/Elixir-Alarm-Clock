@@ -20,7 +20,14 @@ defmodule AlarmClock do
       {hour, _, "pm"} -> current_date_time |> Map.update!(:hour, fn(_)  -> rem(hour + 17, 24) end)
     end
     |> Map.update!(:minute, fn(_) -> elem(time_args, 1) end)
-
+  end
+  def set_alarm(alarm_time) do
+    current_time = DateTime.utc_now
+    case DateTime.compare(current_time, alarm_time) do
+      :gt -> IO.puts "Alarm Triggered GT"
+      :eq -> IO.puts "Alarm Triggered EQ"
+      _ -> set_alarm(alarm_time)
+    end
   end
 
   @doc """
@@ -30,6 +37,6 @@ defmodule AlarmClock do
     args
     |> parse_args
     |> date_time_from_args
-    |> IO.inspect
+    |> set_alarm
   end
 end
