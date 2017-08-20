@@ -1,6 +1,6 @@
 defmodule AlarmClock do
   @moduledoc """
-  Main module for the alarm clock project all logic for the application lives here.
+  Main remule for the alarm clock project all logic for the application lives here.
   """
   def parse_args(args) do
     parsed = OptionParser.parse(args, switches: [hour: :integer, minute: :integer, period: :string]) 
@@ -14,14 +14,13 @@ defmodule AlarmClock do
 
   def date_time_from_args(time_args) do
     current_date_time = DateTime.utc_now
+    #Convert to my timezone, by adding 5 hours not much built-in Timezone handling in Elixir yet
     case time_args do
-      {hour, minute, "am"} -> current_date_time
-      |> Map.update!(:hour, fn(_) -> hour + 5 end) #Convert to my timezone, not much built-in Timezone handling in Elixir yet
-      |> Map.update!(:minute, fn(_) -> minute end)
-      {hour, minute, "pm"} -> current_date_time
-      |> Map.update!(:hour, fn(_)  -> hour + 17 end)
-      |> Map.update!(:minute, fn(_) -> minute end)
+      {hour, _, "am"} -> current_date_time |> Map.update!(:hour, fn(_) -> rem(hour + 5, 24) end) 
+      {hour, _, "pm"} -> current_date_time |> Map.update!(:hour, fn(_)  -> rem(hour + 17, 24) end)
     end
+    |> Map.update!(:minute, fn(_) -> elem(time_args, 1) end)
+
   end
 
   @doc """
