@@ -2,15 +2,30 @@ defmodule AlarmClock do
   @moduledoc """
   Main remule for the alarm clock project all logic for the application lives here.
   """
-  def parse_args(args) do
+
+  def usage_error_message do
+		{:error, "Usage: alarm_clock --hour <1-12>, [--minute <0 - 59>,  --period <am|pm>]"}
+	end
+  
+  def validate_time_tuple(nil), do: usage_error_message()
+  def validate_time_tuple({hour, minute, period}) do
+    cond do
+      not Enum.member?(1..12, hour) -> usage_error_message()
+      not Enum.member?(0..59, minute) -> usage_error_message()
+      not Enum.member?(["am", "pm"], period) -> usage_error_message()
+      true -> {hour, minute, period}
+		end
+	end 
+
+	def parse_args(args) do
     parsed = OptionParser.parse(args, switches: [hour: :integer, minute: :integer, period: :string]) 
     case parsed do
       {[hour: hour], _, _} -> {hour, 0, "am"}
       {[hour: hour, minute: minute], _, _} -> {hour, minute, "am"}
       {[hour: hour, minute: minute, period: period], _, _} -> {hour, minute, period}
-      _ -> {:error, "Usage: alarm_clock --hour <1-12>, [--minute <0 - 59>,  --period <am|pm>]"}
-
+      _ -> nil
     end
+    |> validate_time_tuple
   end
   def adjust_alarm_day(alarm_time) do
     current_hour = Map.get(DateTime.utc_now, :hour)
@@ -62,11 +77,11 @@ defmodule AlarmClock do
   """
   def main(args) do
     case parse_args(args) do
-    {:error, message} -> IO.puts(message)
-    parsed_arguments -> parsed_arguments 
-		|> date_time_from_args
-		|> set_alarm
-		System.cmd("sensible-browser", [read_video_list() |> randomly_select_video])
+			{:error, message} -> IO.puts(message)
+			parsed_arguments -> parsed_arguments 
+			|> date_time_from_args
+			|> set_alarm
+			System.cmd("sensible-browser", [read_video_list() |> randomly_select_video])
 		end
 
 	end
