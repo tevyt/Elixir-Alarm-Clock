@@ -8,7 +8,8 @@ defmodule AlarmClock do
       {[hour: hour], _, _} -> {hour, 0, "am"}
       {[hour: hour, minute: minute], _, _} -> {hour, minute, "am"}
       {[hour: hour, minute: minute, period: period], _, _} -> {hour, minute, period}
-      _ -> {:error, "Invalid usage"}
+      _ -> {:error, "Usage: alarm_clock --hour <1-12>, [--minute <0 - 59>,  --period <am|pm>]"}
+
     end
   end
   def adjust_alarm_day(alarm_time) do
@@ -60,11 +61,13 @@ defmodule AlarmClock do
   Main function entry point of the program
   """
   def main(args) do
-    args
-    |> parse_args
-    |> date_time_from_args
-    |> set_alarm
+    case parse_args(args) do
+    {:error, message} -> IO.puts(message)
+    parsed_arguments -> parsed_arguments 
+		|> date_time_from_args
+		|> set_alarm
+		System.cmd("sensible-browser", [read_video_list() |> randomly_select_video])
+		end
 
-    System.cmd("sensible-browser", [read_video_list() |> randomly_select_video])
-  end
+	end
 end
