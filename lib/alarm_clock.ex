@@ -11,20 +11,31 @@ defmodule AlarmClock do
       _ -> {:error, "Invalid usage"}
     end
   end
+  def adjust_alarm_day(alarm_time) do
+    current_time = DateTime.utc_now
+    case DateTime.compare(current_time, alarm_time) do
+      :lt -> Map.update!(alarm_time, :day, &(&1 + 1))
+      _ -> alarm_time
+		end
+	end
 
   def date_time_from_args(time_args) do
     current_date_time = DateTime.utc_now
     #Convert to my timezone, by adding 5 hours not much built-in Timezone handling in Elixir yet
     case time_args do
-      {hour, _, "am"} -> current_date_time |> Map.update!(:hour, fn(_) -> rem(hour + 5, 24) end) 
-      {hour, _, "pm"} -> current_date_time |> Map.update!(:hour, fn(_)  -> rem(hour + 17, 24) end)
-    end
+      {7, _, "am"} -> current_date_time |> Map.update!(:hour, fn(_) -> 0 end)
+			{hour, _, "am"} -> current_date_time |> Map.update!(:hour, fn(_) -> rem(hour + 5, 24) end) 
+      {7, _, "pm"} -> current_date_time |> Map.update!(:hour, fn(_) -> 12 end)
+			{hour, _, "pm"} -> current_date_time |> Map.update!(:hour, fn(_)  -> rem(hour + 17, 24) end)
+		end
     |> Map.update!(:minute, fn(_) -> elem(time_args, 1) end)
     |> Map.update!(:second, fn(_) -> 0 end)
+    |> adjust_alarm_day
   end
 
   def set_alarm(alarm_time) do
     current_time = DateTime.utc_now
+    IO.inspect(alarm_time)
     case DateTime.compare(current_time, alarm_time) do
       :gt -> IO.puts "Alarm Triggered GT"
       :eq -> IO.puts "Alarm Triggered EQ"
