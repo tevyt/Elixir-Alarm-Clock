@@ -27,6 +27,7 @@ defmodule AlarmClock do
     end
     |> validate_time_tuple
   end
+
   def adjust_alarm_day(alarm_time) do
     current_hour = Map.get(DateTime.utc_now, :hour)
     alarm_hour = Map.get(alarm_time, :hour)
@@ -83,6 +84,5 @@ defmodule AlarmClock do
 			|> set_alarm
 			System.cmd("sensible-browser", [read_video_list() |> randomly_select_video])
 		end
-
 	end
 end
